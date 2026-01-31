@@ -4,7 +4,6 @@ local imgui = require('imgui')
 local ui = require('ui')
 local packets = require('utils/packets')
 
-local Scale = 1.0
 local LastProgress = nil
 local LastActionName = ''
 local ActionTypes = {
@@ -65,16 +64,12 @@ local cast = {
 
         if progress == LastProgress then return end
 
-        Scale = gOptions.uiScale[1]
-
         ui.DrawInvisWindow(options, gOptions, function()
-            imgui.SetWindowFontScale(Scale)
-
             imgui.PushStyleColor(ImGuiCol_FrameBg, { 0.08, 0.08, 0.08, 0.8 })
             imgui.PushStyleColor(ImGuiCol_Border, { 0.69, 0.68, 0.78, 1.0 })
             imgui.PushStyleColor(ImGuiCol_PlotHistogram, options.color)
             imgui.Text(LastActionName)
-            imgui.ProgressBar(progress, ui.Scale(options.barSize, Scale))
+            imgui.ProgressBar(progress, options.barSize)
             imgui.PopStyleColor(3)
 
             LastProgress = progress

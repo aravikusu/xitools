@@ -66,7 +66,6 @@ local defaultOptions = T{
         textColor = T{ 1.00, 1.00, 1.00, 1.0 },
         backgroundColor = T{ 0.08, 0.08, 0.08, 0.8 },
         borderColor = T{ 0.69, 0.68, 0.78, 1.0 },
-        uiScale = T{ 1.0 },
         baseW = 7,
         baseH = 14,
     },
@@ -106,11 +105,6 @@ local function DrawConfig()
         imgui.Checkbox('Hide while loading', options.globals.hideWhileLoading)
         imgui.Checkbox('Hide during events', options.globals.hideDuringEvent)
         imgui.Checkbox('Hide with game interface', options.globals.hideWithInterface)
-
-        if imgui.InputFloat('UI Scale', options.globals.uiScale, 0.01, 0.025) then
-            imgui.SetWindowFontScale(options.globals.uiScale[1])
-            options.globals.baseH, options.globals.baseH = imgui.CalcTextSize('A')
-        end
         imgui.NewLine()
 
         imgui.Text('UI settings')

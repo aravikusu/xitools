@@ -777,9 +777,7 @@ local inv = {
         end
     end,
     DrawMain = function(options, gOptions)
-        Scale = gOptions.uiScale[1]
         ui.DrawNormalWindow(options, gOptions, function()
-            imgui.SetWindowFontScale(Scale)
             if options.isUnified[1] then
                 DrawInventoryUnified()
             else

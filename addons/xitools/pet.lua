@@ -3,8 +3,6 @@ local bit = require('bit')
 local imgui = require('imgui')
 local ui = require('ui')
 
-local Scale = 1.0
-
 ---@param name     string
 ---@param distance string
 local function DrawHeader(name, distance, options)
@@ -40,7 +38,7 @@ local function DrawHpp(cur, max)
 
     -- imgui.PushStyleColor(ImGuiCol_Text, textColor)
     -- imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    -- ui.DrawBar(title, cur, max, ui.Scale(ui.Styles.BarSize, Scale), '')
+    -- ui.DrawBar(title, cur, max, ui.Styles.BarSize, '')
     -- imgui.PopStyleColor(2)
 
     local textColor = ui.Colors.White
@@ -49,7 +47,7 @@ local function DrawHpp(cur, max)
 
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    ui.DrawBar3(cur, max, ui.Scale({ 80, 15 }, Scale), overlay)
+    ui.DrawBar3(cur, max, { 80, 15 }, overlay)
     imgui.PopStyleColor(2)
 end
 
@@ -72,7 +70,7 @@ local function DrawMpp(cur, max)
 
     -- imgui.PushStyleColor(ImGuiCol_Text, textColor)
     -- imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    -- ui.DrawBar(title, cur, max, ui.Scale(ui.Styles.BarSize, Scale), '')
+    -- ui.DrawBar(title, cur, max, ui.Styles.BarSize, '')
     -- imgui.PopStyleColor(2)
 
     local textColor = ui.Colors.White
@@ -82,7 +80,7 @@ local function DrawMpp(cur, max)
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     imgui.SameLine()
-    ui.DrawBar2(cur, max, ui.Scale({ 80, 15 }, Scale), overlay)
+    ui.DrawBar2(cur, max, { 80, 15 }, overlay)
     imgui.PopStyleColor(2)
 end
 
@@ -100,7 +98,7 @@ local function DrawTp(cur, max)
 
     -- imgui.PushStyleColor(ImGuiCol_Text, textColor)
     -- imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    -- ui.DrawBar(title, cur, max, ui.Scale(ui.Styles.BarSize, Scale), '')
+    -- ui.DrawBar(title, cur, max, ui.Styles.BarSize, '')
     -- imgui.PopStyleColor(2)
 
     local textColor = ui.Colors.White
@@ -114,7 +112,7 @@ local function DrawTp(cur, max)
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     imgui.SameLine()
-    ui.DrawBar2(cur, max, ui.Scale({ 80, 15 }, Scale), overlay)
+    ui.DrawBar2(cur, max, { 80, 15 }, overlay)
     imgui.PopStyleColor(2)
 end
 
@@ -150,8 +148,6 @@ local pet = {
         end
     end,
     DrawMain = function(options, gOptions)
-        Scale = gOptions.uiScale[1]
-
         ---@type Entity
         local player = GetPlayerEntity()
         if player == nil then return end
@@ -161,7 +157,6 @@ local pet = {
         if pet == nil or pet.Name == nil then return end
 
         ui.DrawUiWindow(options, gOptions, function()
-            imgui.SetWindowFontScale(Scale)
             DrawPet(pet, options)
         end)
     end,

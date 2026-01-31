@@ -5,8 +5,6 @@ local ui = require('ui')
 local ffxi = require('utils/ffxi')
 local packets = require('utils/packets')
 
-local Scale = 1.0
-
 local Spell = 4
 local Ability = 6
 local Arrow = '\xef\x81\xa1'
@@ -132,7 +130,7 @@ local function DrawTrackers(trackers)
     local now = os.time()
     for _, trackedItem in ipairs(trackers) do
         imgui.Text(trackedItem.Name[1])
-        imgui.Indent(10 * Scale)
+        imgui.Indent(10)
 
         for idx, activeItem in ipairs(trackedItem.ActiveItems) do
             local elapsed = now - activeItem.time
@@ -147,7 +145,7 @@ local function DrawTrackers(trackers)
             end
         end
 
-        imgui.Unindent(10 * Scale)
+        imgui.Unindent(10)
     end
 end
 
@@ -161,7 +159,7 @@ local function ConfigTrackers(title, trackers, getName)
             imgui.PopID()
 
             imgui.SameLine()
-            imgui.SetNextItemWidth(80 * Scale)
+            imgui.SetNextItemWidth(80)
             imgui.PushID(('%s%i.Id'):format(title, idx))
             if imgui.InputInt('', trackedItem.Id) then
                 trackedItem.Name[1] = getName(trackedItem.Id[1])
@@ -169,13 +167,13 @@ local function ConfigTrackers(title, trackers, getName)
             imgui.PopID()
 
             imgui.SameLine()
-            imgui.SetNextItemWidth(130 * Scale)
+            imgui.SetNextItemWidth(130)
             imgui.PushID(('%s%i.Name'):format(title, idx))
             imgui.InputText('', trackedItem.Name, 256)
             imgui.PopID()
 
             imgui.SameLine()
-            imgui.SetNextItemWidth(80 * Scale)
+            imgui.SetNextItemWidth(80)
             imgui.PushID(('%s%i.Duration'):format(title, idx))
             imgui.InputInt('', trackedItem.Duration)
             imgui.PopID()
@@ -205,7 +203,7 @@ local function ConfigTrackers(title, trackers, getName)
 
                     if imgui.BeginChild(tag, size) then
                         for jdx, alias in ipairs(trackedItem.Aliases) do
-                            imgui.SetNextItemWidth(80 * Scale)
+                            imgui.SetNextItemWidth(80)
                             imgui.PushID(('%s%i.Alias%i.Id'):format(title, idx, jdx))
                             if imgui.InputInt('', alias.Id) then
                                 alias.Name[1] = getName(alias.Id[1])
@@ -213,7 +211,7 @@ local function ConfigTrackers(title, trackers, getName)
                             imgui.PopID()
 
                             imgui.SameLine()
-                            imgui.SetNextItemWidth(130 + 164 * Scale)
+                            imgui.SetNextItemWidth(130 + 164)
                             imgui.PushID(('%s%i.Alias%i.Name'):format(title, idx, jdx))
                             imgui.InputText('', alias.Name, 256)
                             imgui.PopID()
@@ -295,11 +293,7 @@ local tracker = {
         local activeAbilities = Where(options.abilities, HasActiveItems)
         if #activeSpells == 0 and #activeAbilities == 0 then return end
 
-        Scale = gOptions.uiScale[1]
-
         ui.DrawUiWindow(options, gOptions, function()
-            imgui.SetWindowFontScale(Scale)
-
             if #activeSpells > 0 then
                 DrawTrackers(activeSpells)
             end

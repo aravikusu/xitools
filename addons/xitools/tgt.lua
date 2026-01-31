@@ -4,8 +4,6 @@ local imgui = require('imgui')
 local ui = require('ui')
 local packets = require('utils/packets')
 
-local Scale = 1.0
-
 local StatusType = {
     -- standard fare
     Dia = 'dia',
@@ -664,10 +662,10 @@ local function DrawHeader(name, distance, options)
     imgui.Text(name)
 
     local dist = string.format('%.1fm', distance)
-    local width = imgui.CalcTextSize(dist) + ui.Styles.WindowPadding[1] * Scale
+    local width = imgui.CalcTextSize(dist) + ui.Styles.WindowPadding[1]
 
     imgui.SameLine()
-    imgui.SetCursorPosX(options.size[1] * Scale - width)
+    imgui.SetCursorPosX(options.size[1] - width)
     imgui.Text(dist)
 end
 
@@ -689,7 +687,7 @@ local function DrawHp(hpPercent)
 
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    ui.DrawBar(title, hpPercent, 100, ui.Scale(ui.Styles.BarSize, Scale), '')
+    ui.DrawBar(title, hpPercent, 100, ui.Styles.BarSize, '')
     imgui.PopStyleColor(2)
 end
 
@@ -865,12 +863,8 @@ local tgt = {
 
         -- TODO: if no subtarget, check for stpt/stal
 
-        Scale = gOptions.uiScale[1]
-
         if options.showMain[1] and targetActive and targetId ~= 0 then
             ui.DrawUiWindow(options.mainWindow, gOptions, function()
-                imgui.SetWindowFontScale(Scale)
-
                 local entity = GetEntity(targetId)
                 DrawTgt(entity, options.mainWindow)
                 totId = entity.TargetedIndex or 0
@@ -879,8 +873,6 @@ local tgt = {
 
         if options.showSub[1] and subTargetActive and subTargetId ~= 0 then
             ui.DrawUiWindow(options.subWindow, gOptions, function()
-                imgui.SetWindowFontScale(Scale)
-
                 local entity = GetEntity(subTargetId)
                 DrawTgt(entity, options.subWindow)
             end)
@@ -893,8 +885,6 @@ local tgt = {
             local entity = GetEntity(totId)
             if entity then
                 ui.DrawUiWindow(options.totWindow, gOptions, function()
-                    imgui.SetWindowFontScale(Scale)
-
                     -- TODO: compact tot display
                     DrawTgt(entity, options.totWindow)
                 end)

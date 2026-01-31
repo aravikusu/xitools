@@ -4,8 +4,6 @@ local imgui = require('imgui')
 local ui = require('ui')
 local packets = require('utils/packets')
 
-local Scale = 1.0
-
 local IsListening = { false }
 
 local Colors = {
@@ -290,10 +288,7 @@ local week = {
         end
     end,
     DrawMain = function(options, gOptions)
-        Scale = gOptions.uiScale[1]
-
         ui.DrawNormalWindow(options, gOptions, function()
-            imgui.SetWindowFontScale(Scale)
             DrawWeek(options.timers)
         end)
     end,

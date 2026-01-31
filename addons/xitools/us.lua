@@ -9,8 +9,6 @@ local ui = require('ui')
 local ffxi = require('utils/ffxi')
 local zones = require('utils/zones')
 
-local Scale = 1.0
-
 local Textures = { }
 local Alliances = { }
 
@@ -196,6 +194,7 @@ local function GetPlayer(options, target, party, stal)
         isPartyLeader = bit.band(party:GetMemberFlagMask(0), 4) == 4,
         isAllianceLeader = bit.band(party:GetMemberFlagMask(0), 8) == 8,
         isSyncTarget = bit.band(party:GetMemberFlagMask(0), 256) == 256,
+        -- isQuartermaster = 144
         isTarget = (target:GetIsSubTargetActive() == 0 and serverId == target:GetServerId(0)) or (target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(1)),
         isSubTarget = target:GetIsSubTargetActive() == 1 and serverId == target:GetServerId(0),
         isPartyTarget = stal ~= nil and stal == 0,
@@ -255,7 +254,7 @@ end
 ---@param color Vec4
 local function DrawDot(pos, color)
     local realColor = imgui.GetColorU32(color)
-    imgui.GetWindowDrawList():AddCircleFilled(pos, 3 * Scale, realColor, 0)
+    imgui.GetWindowDrawList():AddCircleFilled(pos, 3, realColor, 0)
 end
 
 ---@param player PartyMember
@@ -282,22 +281,22 @@ local function DrawName(player, showDist)
     local offsetX = 0
 
     if player.isAllianceLeader then
-        DrawDot({originX + offsetX + 3 * Scale, originY + 6 * Scale}, ui.Colors.TpBarActive)
-        offsetX = offsetX + 6 * Scale
+        DrawDot({originX + offsetX + 3, originY + 6}, ui.Colors.TpBarActive)
+        offsetX = offsetX + 6
     end
 
     if player.isPartyLeader then
-        DrawDot({originX + offsetX + 3 * Scale, originY + 6 * Scale}, ui.Colors.FfxiAmber)
-        offsetX = offsetX + 6 * Scale
+        DrawDot({originX + offsetX + 3, originY + 6}, ui.Colors.FfxiAmber)
+        offsetX = offsetX + 6
     end
 
     if player.isSyncTarget then
-        DrawDot({originX + offsetX + 3 * Scale, originY + 6 * Scale}, ui.Colors.Red)
-        offsetX = offsetX + 6 * Scale
+        DrawDot({originX + offsetX + 3, originY + 6}, ui.Colors.Red)
+        offsetX = offsetX + 6
     end
 
     local windowX = imgui.GetCursorPosX()
-    imgui.SetCursorPosX(windowX + offsetX * Scale)
+    imgui.SetCursorPosX(windowX + offsetX)
 
     imgui.Text(player.name)
     imgui.PopStyleColor()
@@ -309,14 +308,14 @@ local function DrawName(player, showDist)
     local castbar = AshitaCore:GetMemoryManager():GetCastBar()
     if player.showCastbar and castbar:GetCount() ~= 0 then
         imgui.SameLine()
-        imgui.SetCursorPosX((player.windowSize[1] * Scale) - (80 + 10) * Scale)
-        ui.DrawBar2(castbar:GetPercent() * 100, 100, ui.Scale({ 80, 8 }, Scale), '')
+        imgui.SetCursorPosX(player.windowSize[1] - (80 + 10))
+        ui.DrawBar2(castbar:GetPercent() * 100, 100, { 80, 8 }, '')
     elseif showDist and player.entity then
         local dist = string.format('%.1fm', math.sqrt(player.entity.Distance))
-        local width = imgui.CalcTextSize(dist) + ui.Styles.WindowPadding[1] * Scale
+        local width = imgui.CalcTextSize(dist) + ui.Styles.WindowPadding[1]
 
         imgui.SameLine()
-        imgui.SetCursorPosX((player.windowSize[1] * Scale) - width)
+        imgui.SetCursorPosX(player.windowSize[1] - width)
         imgui.Text(dist)
     elseif player.job ~= nil then
         local jobStr = ''
@@ -326,10 +325,10 @@ local function DrawName(player, showDist)
             jobStr = string.format('%s%i', player.job, player.jobLevel)
         end
 
-        local width = imgui.CalcTextSize(jobStr) + ui.Styles.WindowPadding[1] * Scale
+        local width = imgui.CalcTextSize(jobStr) + ui.Styles.WindowPadding[1]
 
         imgui.SameLine()
-        imgui.SetCursorPosX((player.windowSize[1] * Scale) - width)
+        imgui.SetCursorPosX(player.windowSize[1] - width)
         imgui.Text(jobStr)
     end
 end
@@ -348,7 +347,7 @@ local function DrawHp(player)
 
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    ui.DrawBar3(player.hpp, 100, ui.Scale({ 80, 15 }, Scale), overlay)
+    ui.DrawBar3(player.hpp, 100, { 80, 15 }, overlay)
     imgui.PopStyleColor(2)
 end
 
@@ -361,7 +360,7 @@ local function DrawMp(player)
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     imgui.SameLine()
-    ui.DrawBar2(player.mpp, 100, ui.Scale({ 80, 15 }, Scale), overlay)
+    ui.DrawBar2(player.mpp, 100, { 80, 15 }, overlay)
     imgui.PopStyleColor(2)
 end
 
@@ -378,13 +377,13 @@ local function DrawTp(player)
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     imgui.SameLine()
-    ui.DrawBar2(player.tp, 3000, ui.Scale({ 80, 15 }, Scale), overlay)
+    ui.DrawBar2(player.tp, 3000, { 80, 15 }, overlay)
     imgui.PopStyleColor(2)
 end
 
 ---@param player PartyMember
 local function DrawBuffs(player)
-    imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, ui.Scale({ 2, 2 }, Scale))
+    imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, { 2, 2 })
     imgui.NewLine()
 
     for _, buffId in ipairs(player.statusIds) do
@@ -397,7 +396,7 @@ local function DrawBuffs(player)
         if buffIcon ~= 'missing' then
             imgui.SameLine()
             local img = tonumber(ffi.cast("uint32_t", buffIcon))
-            imgui.Image(img, ui.Scale({ 16, 16 }, Scale))
+            imgui.Image(img, { 16, 16 })
         end
     end
 
@@ -433,8 +432,6 @@ end
 
 local function DrawAlliance(alliance, gOptions)
     ui.DrawUiWindow(alliance, gOptions, function()
-        imgui.SetWindowFontScale(Scale)
-
         local target = AshitaCore:GetMemoryManager():GetTarget()
         local party = AshitaCore:GetMemoryManager():GetParty()
         local stal = ffxi.GetStPartyIndex()
@@ -568,8 +565,6 @@ local us = {
         local alliCount1 = party:GetAlliancePartyMemberCount1()
         local alliCount2 = party:GetAlliancePartyMemberCount2()
         local alliCount3 = party:GetAlliancePartyMemberCount3()
-
-        Scale = gOptions.uiScale[1]
 
         if (options.hideWhenSolo[1] and alliCount1 > 1)
         or (not options.hideWhenSolo[1] and alliCount1 > 0) then

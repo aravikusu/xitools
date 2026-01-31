@@ -42,16 +42,6 @@ local ui = {
     },
 }
 
-function ui.Scale(vector, scale)
-    local scaledVec = T{}
-
-    for _, value in ipairs(vector) do
-        scaledVec:append(value * scale)
-    end
-
-    return scaledVec
-end
-
 ---@param title   string
 ---@param cur     integer
 ---@param max     integer
@@ -116,7 +106,7 @@ function ui.DrawNormalWindow(config, gConfig, drawStuff)
         return
     end
 
-    imgui.SetNextWindowSize(ui.Scale(config.size, gConfig.uiScale[1]))
+    imgui.SetNextWindowSize(config.size)
     imgui.SetNextWindowPos(config.pos, ImGuiCond_FirstUseEver)
 
     if config.maxHeight then
@@ -146,13 +136,13 @@ function ui.DrawUiWindow(config, gConfig, drawStuff)
         flags = bit.bor(flags, ImGuiWindowFlags_NoInputs)
     end
 
-    imgui.SetNextWindowSize(ui.Scale(config.size, gConfig.uiScale[1]))
+    imgui.SetNextWindowSize(config.size)
     imgui.SetNextWindowPos(config.pos, ImGuiCond_FirstUseEver)
 
     imgui.PushStyleColor(ImGuiCol_WindowBg, gConfig.backgroundColor)
     imgui.PushStyleColor(ImGuiCol_Border, gConfig.borderColor)
-    imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, ui.Scale(ui.Styles.ItemSpacing, gConfig.uiScale[1]))
-    imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, ui.Scale(ui.Styles.WindowPadding, gConfig.uiScale[1]))
+    imgui.PushStyleVar(ImGuiStyleVar_ItemSpacing, ui.Styles.ItemSpacing)
+    imgui.PushStyleVar(ImGuiStyleVar_WindowPadding, ui.Styles.WindowPadding)
 
     local isOpen = imgui.Begin(config.name, config.isVisible, flags)
     imgui.PopStyleColor(2)
@@ -187,7 +177,7 @@ function ui.DrawInvisWindow(config, gConfig, drawStuff)
         flags = bit.bor(flags, ImGuiWindowFlags_NoInputs)
     end
 
-    imgui.SetNextWindowSize(ui.Scale(config.size, gConfig.uiScale[1]))
+    imgui.SetNextWindowSize(config.size)
     imgui.SetNextWindowPos(config.pos, ImGuiCond_FirstUseEver)
 
     imgui.PushStyleColor(ImGuiCol_WindowBg, { 0, 0, 0, 0 })

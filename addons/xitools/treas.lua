@@ -5,7 +5,6 @@ local ui = require('ui')
 local packets = require('utils/packets')
 
 local TextBaseWidth = imgui.CalcTextSize('A')
-local Scale = 1.0
 local WeirdTimestamps = {}
 
 local gold = { 1.0, 215/255, 0.0, 1.0 }
@@ -219,12 +218,10 @@ local treas = {
         end
     end,
     DrawMain = function(options, gOptions)
-        Scale = gOptions.uiScale[1]
         local treasurePool = GetTreasure(options)
         -- local treasurePool = GetDummyTreasure()
         if #treasurePool > 0 then
             ui.DrawNormalWindow(options, gOptions, function()
-                imgui.SetWindowFontScale(Scale)
                 DrawTreasure(treasurePool)
             end)
         else
