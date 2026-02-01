@@ -629,11 +629,11 @@ local function DrawItem(item, addCtxMenu)
     end
 end
 
+local tabsWidthIsh = imgui.CalcTextSize(' bag satchel ward house ')
+local rowLengthIsh = math.ceil(tabsWidthIsh / (32 + 8))
 local function DrawBag(bagId, subId)
-    local rowLength = 5
-
     for i, item in ipairs(inventories[bagId][subId]) do
-        if i % rowLength ~= 1 then
+        if i % rowLengthIsh ~= 1 then
             imgui.SameLine()
         end
 
