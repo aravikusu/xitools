@@ -347,7 +347,7 @@ local function DrawHp(player)
 
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
-    ui.DrawBar3(player.hpp, 100, { 80, 15 }, overlay)
+    ui.DrawBar3(player.hpp, 100, ui.Styles.ShortBarSize, overlay)
     imgui.PopStyleColor(2)
 end
 
@@ -360,7 +360,7 @@ local function DrawMp(player)
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     imgui.SameLine()
-    ui.DrawBar2(player.mpp, 100, { 80, 15 }, overlay)
+    ui.DrawBar2(player.mpp, 100, ui.Styles.ShortBarSize, overlay)
     imgui.PopStyleColor(2)
 end
 
@@ -377,7 +377,7 @@ local function DrawTp(player)
     imgui.PushStyleColor(ImGuiCol_Text, textColor)
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     imgui.SameLine()
-    ui.DrawBar2(player.tp, 3000, { 80, 15 }, overlay)
+    ui.DrawBar2(player.tp, 3000, ui.Styles.ShortBarSize, overlay)
     imgui.PopStyleColor(2)
 end
 

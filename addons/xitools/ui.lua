@@ -1,7 +1,7 @@
 local bit = require('bit')
 local imgui = require('imgui')
 
-local txtW, txtH = imgui.CalcTextSize('A')
+local txtW, txtH = imgui.CalcTextSize('HP 100%')
 
 local ui = {
     Styles = {
@@ -9,7 +9,8 @@ local ui = {
         WindowPadding     = { 10, 10 },
         FramePaddingNone  = { 0, 0 },
         FramePaddingSome  = { 4, 2 },
-        BarSize           = { 199, txtH },
+        BarSize           = { 248 - txtW, txtH }, -- 276 std width, 20 std padding, 8 spacing
+        ShortBarSize      = {  80, txtH },
     },
     Colors = {
         White          = { 1.00, 1.00, 1.00, 1.0 },

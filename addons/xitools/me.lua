@@ -19,11 +19,10 @@ local function DrawHeader(name, job, jobLevel, sub, subLevel, options)
         jobStr = string.format('%s%i', ffxi.GetJobAbbr(job), jobLevel)
     end
 
-    -- TODO: seems a little scuffed, not quite aligned right. better way to set pos?
-    local windowW = imgui.GetContentRegionAvail()
+    local width = imgui.CalcTextSize(jobStr) + ui.Styles.WindowPadding[1]
 
     imgui.SameLine()
-    imgui.SetCursorPosX(windowW - imgui.CalcTextSize(jobStr))
+    imgui.SetCursorPosX(options.size[1] - width)
     imgui.Text(jobStr)
 end
 
@@ -147,7 +146,7 @@ local me = {
         isEnabled = T{ false },
         isVisible = T{ true },
         name = 'xitools.me',
-        size = T{ -1, -1 },
+        size = T{ 276, -1 },
         pos = T{ 100, 100 },
         flags = bit.bor(ImGuiWindowFlags_NoDecoration),
     },
