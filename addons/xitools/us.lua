@@ -396,7 +396,7 @@ local function DrawBuffs(player)
         if buffIcon ~= 'missing' then
             imgui.SameLine()
             local img = tonumber(ffi.cast("uint32_t", buffIcon))
-            imgui.Image(img, { 16, 16 })
+            imgui.Image(img, { ui.Styles.ShortBarSize[2], ui.Styles.ShortBarSize[2] })
         end
     end
 
