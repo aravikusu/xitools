@@ -26,18 +26,11 @@ local migrations = {
 
         options.version = '0.21'
     end,
-    ['0.21'] = function(options)
-        options.version = '0.22'
-    end,
-    ['0.22'] = function(options)
-        options.version = '0.23'
-    end,
-    ['0.23'] = function(options)
-        options.version = '0.24'
-    end,
-    ['0.24'] = function(options)
-        options.version = '0.25'
-    end,
+    ['0.21'] = function(options) options.version = '0.22' end,
+    ['0.22'] = function(options) options.version = '0.23' end,
+    ['0.23'] = function(options) options.version = '0.24' end,
+    ['0.24'] = function(options) options.version = '0.25' end,
+    ['0.25'] = function(options) options.version = '0.26' end,
 }
 
 return {
