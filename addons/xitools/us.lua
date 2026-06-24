@@ -306,6 +306,17 @@ local function DrawName(player, showDist)
     -- calculate the width of our displayed item, and offset it from the width
     -- of the window. this probably won't work with a dynamically-sized window.
     local castbar = AshitaCore:GetMemoryManager():GetCastBar()
+    
+
+    -- FFXI seems to have 'locked in' a cast at about 77% of the cast.
+    -- This means that if you've moved, the cast fails, and if not, it will succeed.
+    -- That said, the cast is never 'killed' if it's interrupted.
+    -- So yeah, we remove the castbar early. But at least it doesn't show if the cast is interrupted.
+    if castbar:GetCount() ~= 0 then
+       if castbar:GetPercent() * 100 > 77 then
+            player.showCastbar = false
+       end 
+    end
     if player.showCastbar and castbar:GetCount() ~= 0 then
         imgui.SameLine()
         imgui.SetCursorPosX(player.windowSize[1] - (80 + 10))
