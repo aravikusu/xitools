@@ -95,11 +95,7 @@ end
 ---@param cur      integer
 ---@param max      integer
 ---@param isLocked boolean
-local function DrawXp(cur, max, isLocked)
-    if isLocked then
-        return
-    end
-
+local function DrawXp(cur, max)
     local barColor = ui.Colors.XpBar
     local title = string.format('XP %4s', ffxi.FormatXp(cur, false))
     local overlay = ffxi.FormatXp(max - cur, true)
@@ -112,13 +108,21 @@ end
 ---@param cur      integer
 ---@param max      integer
 ---@param isLocked boolean
-local function DrawLp(cur, max, isLocked)
-    if isLocked then
-        return
-    end
-
+local function DrawLp(cur, max)
     local barColor = ui.Colors.LpBar
     local title = string.format('LP %4s', ffxi.FormatXp(cur, false))
+
+    imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
+    ui.DrawBar(title, cur, max, ui.Styles.BarSize)
+    imgui.PopStyleColor()
+end
+
+---@param cur      integer
+---@param max      integer
+---@param isLocked boolean
+local function DrawExemp(cur, max)
+    local barColor = ui.Colors.LpBar
+    local title = string.format('EXEMP %4s', ffxi.FormatXp(cur, false))
 
     imgui.PushStyleColor(ImGuiCol_PlotHistogram, barColor)
     ui.DrawBar(title, cur, max, ui.Styles.BarSize)
@@ -135,8 +139,20 @@ local function DrawMe(player, party, entity, options)
     DrawHp(party:GetMemberHP(0), player:GetHPMax())
     DrawMp(party:GetMemberMP(0), player:GetMPMax())
     DrawTp(party:GetMemberTP(0), 3000)
-    DrawXp(player:GetExpCurrent(), player:GetExpNeeded(), isExpLocked)
-    DrawLp(player:GetLimitPoints(), 10000, not isExpLocked)
+
+    if isExpLocked then
+        DrawXp(player:GetExpCurrent(), player:GetExpNeeded())
+    else
+        DrawLp(player:GetLimitPoints(), 10000)
+    end
+
+    if options.showJp then
+        print(player.GetJobPoints())
+        local jpMax = true
+        if jpMax then
+            DrawExemp(player.GetMasteryExp(), 30000)
+        end
+    end
 end
 
 ---@type xitool
@@ -149,10 +165,12 @@ local me = {
         size = T{ 276, -1 },
         pos = T{ 100, 100 },
         flags = bit.bor(ImGuiWindowFlags_NoDecoration),
+        showJp = T{ true },
     },
     DrawConfig = function(options, gOptions)
         if imgui.BeginTabItem('me') then
             imgui.Checkbox('Enabled', options.isEnabled)
+            imgui.Checkbox('Show Capacity/Exemplar points', options.showJp)
             if imgui.InputInt2('Position', options.pos) then
                 imgui.SetWindowPos(options.name, options.pos)
             end
