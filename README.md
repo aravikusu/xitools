@@ -1,3 +1,13 @@
+# re: this fork of xitools
+The idea of this fork is to keep extending xitools. Add new features, fix things. 
+Namely: finish all the todo's lin has listed in `xitools`, then extend existing components or add new ones.
+
+Ideas: capacity / exemplar points, a new component to show everything you got hate on, etc.
+
+The fork is mainly working on `xitools` specifically, but I might do things to the other addons too, such as `skillchain`.
+
+Below is lin's original readme:
+
 # xitools
 a collection of addons (and maybe some plugins) for Ashita v4 that I made.
 

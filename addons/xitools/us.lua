@@ -416,14 +416,17 @@ end
 
 ---@param player PartyMember
 ---@param showDist boolean
-local function DrawPartyMember(player, showDist)
+---@param showBuffs boolean
+local function DrawPartyMember(player, showDist, showBuffs)
     DrawName(player, showDist)
 
     if player.isInZone then
         DrawHp(player)
         DrawMp(player)
         DrawTp(player)
-        DrawBuffs(player)
+        if showBuffs then
+            DrawBuffs(player)
+        end
     else
         DrawZone(player)
     end
@@ -441,21 +444,28 @@ local function DrawCompactPartyMember(player)
     end
 end
 
-local function DrawAlliance(alliance, gOptions)
+local function DrawAlliance(alliance, options, gOptions)
     ui.DrawUiWindow(alliance, gOptions, function()
         local target = AshitaCore:GetMemoryManager():GetTarget()
         local party = AshitaCore:GetMemoryManager():GetParty()
         local stal = ffxi.GetStPartyIndex()
-        local showDist = stal ~= nil or IsSubTargetActive(target)
+        local showBuffs = options.showBuffs[1]
 
+        local playerName = party:GetMemberName(0)
+        
         for _, getMember in pairs(Alliances[alliance.name]) do
             local person = getMember(target, party, stal)
+            
+            local showDist = options.showDistance[1]
+            if person.name == playerName then
+                showDist = false
+            end
 
             if person.isActive and person.name ~= '' then
                 if alliance.isCompact[1] then
                     DrawCompactPartyMember(person)
                 else
-                    DrawPartyMember(person, showDist)
+                    DrawPartyMember(person, showDist, showBuffs)
                 end
             end
         end
@@ -497,6 +507,8 @@ local us = {
         isVisible = T{ true },
         hideWhenSolo = T{ false },
         showCastbar = T{ true },
+        showDistance = T{ false },
+        showBuffs = T{ true },
         alliance1 = T{
             isCompact = T{ false },
             isVisible = T{ true },
@@ -535,6 +547,8 @@ local us = {
             imgui.Checkbox('Enabled', options.isEnabled)
             imgui.Checkbox('Hide when solo', options.hideWhenSolo)
             imgui.Checkbox('Display cast bar', options.showCastbar)
+            imgui.Checkbox('Display distance', options.showDistance)
+            imgui.Checkbox('Display buffs', options.showBuffs)
 
             if imgui.Checkbox('Compact alliance 1', options.alliance1.isCompact) then
                 if options.alliance1.isCompact[1] then
@@ -579,13 +593,13 @@ local us = {
 
         if (options.hideWhenSolo[1] and alliCount1 > 1)
         or (not options.hideWhenSolo[1] and alliCount1 > 0) then
-            DrawAlliance(options.alliance1, gOptions)
+            DrawAlliance(options.alliance1, options, gOptions)
         end
         if alliCount2 > 0 then
-            DrawAlliance(options.alliance2, gOptions)
+            DrawAlliance(options.alliance2, options, gOptions)
         end
         if alliCount3 > 0 then
-            DrawAlliance(options.alliance3, gOptions)
+            DrawAlliance(options.alliance3, options, gOptions)
         end
     end,
 }
