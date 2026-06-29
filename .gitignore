@@ -1,6 +1,7 @@
 .idea/
 .vs/
 .vscode/
+.DS_Store
 
 config/addons/thotbar/**/bindings/
 config/addons/thotbar/**/settings.lua

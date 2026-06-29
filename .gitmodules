@@ -1,3 +1,6 @@
 [submodule "addons/dxui/gdifonts"]
 	path = addons/dxui/gdifonts
 	url = https://github.com/ThornyFFXI/gdifonts.git
+[submodule "addons/xitools/submodules/--force"]
+	path = addons/xitools/submodules/--force
+	url = https://github.com/ThornyFFXI/mobdb
