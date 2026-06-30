@@ -1,0 +1,33 @@
+---@meta
+
+---@class MobData
+---@field Name string
+---@field Notorious boolean
+---@field MinLevel integer
+---@field MaxLevel integer
+---@field Job integer
+---@field Aggro boolean
+---@field Link boolean
+---@field Sight boolean
+---@field TrueSight boolean
+---@field Sound boolean
+---@field Scent boolean
+---@field Magic boolean
+---@field JA boolean
+---@field Blood boolean
+---@field Immunities integer
+---@field Modifiers Modifiers
+
+---@class Modifiers
+---@field Slashing number
+---@field Piercing number
+---@field H2H number
+---@field Impact number
+---@field Fire number
+---@field Ice number
+---@field Wind number
+---@field Earth number
+---@field Lightning number
+---@field Water number
+---@field Light number
+---@field Dark number

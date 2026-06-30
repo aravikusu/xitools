@@ -31,3 +31,4 @@ scripts i may or may not use, and that you may or may not find useful.
 - shinzaku for inspiring my imgui-fication with [`points`](https://github.com/Shinzaku/Points)
 - syllendel for the icons i yoinked from [his hud](https://github.com/Syllendel/CustomHUD)
 - kikito for [inspect](https://github.com/kikito/inspect.lua)
+- [XIUI](https://github.com/tirem/XIUI/tree/main) for the mobdb inspiration

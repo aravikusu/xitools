@@ -1,8 +1,10 @@
 require('common')
 local bit = require('bit')
 local imgui = require('imgui')
+local ffi = require("ffi");
 local ui = require('ui')
 local packets = require('utils/packets')
+local mobdb = require('utils/mobdb')
 
 local StatusType = {
     -- standard fare
@@ -766,6 +768,109 @@ local function DrawTgt(entity, options)
     end
 end
 
+local function DrawMobInfoIcon(icon, tooltip, iconSize)
+    local posX, posY = imgui.GetCursorScreenPos()
+
+    local drawList = imgui.GetWindowDrawList()
+    drawList:AddImage(
+            tonumber(ffi.cast("uint32_t", icon.image)),
+            {posX, posY},
+            {posX + iconSize, posY + iconSize},
+            {0, 0}, {1, 1},
+            0xFFFFFFFF -- White (no tint)
+        );
+    imgui.Dummy({iconSize, iconSize});
+    
+    if imgui.IsItemHovered() then
+        local t = tooltip:gsub('%%%%', '%%');
+        local mx, my = imgui.GetMousePos();
+        local tw, th = imgui.CalcTextSize(t);
+        local dl = imgui.GetForegroundDrawList();
+        dl:AddRectFilled({mx + 12, my + 12}, {mx + 24 + tw, my + 20 + th}, 0xE0000000, 3);
+        dl:AddText({mx + 18, my + 16}, 0xFFFFFFFF, t);
+    end
+end
+
+
+---comment
+---@param entity Entity
+---@param index integer
+---@param options table
+local function DrawMobInfo(entity, index, options)
+    local mob = mobdb.GetMobData(entity.Name, index)
+    if mob == nil then return end
+
+    if options.showDetection[1] then
+        local icons = mobdb.HandleMobDetections(mob)
+
+        for _, icon in ipairs(icons) do
+            DrawMobInfoIcon(icon.icon, icon.name, options.iconSize[1])
+            imgui.SameLine()
+        end
+    end
+
+    if options.showLvl[1] then
+        local text = mobdb.HandleMobLevel(mob)
+        imgui.Text(text)
+    end
+
+    if options.showWeakness[1] then
+        local icons = mobdb.HandleMobWeaknesses(mob)
+
+        for i, icon in ipairs(icons) do
+            local _, nextIcon = next(icons, i)
+            DrawMobInfoIcon(icon.icon, icon.name, options.iconSize[1])
+            imgui.SameLine()
+            if nextIcon == nil or icon.modifier ~= nextIcon.modifier then
+                imgui.Text(icon.modifier)
+                imgui.SameLine()
+            end
+        end
+    end
+
+    if options.showResistance[1] then
+        local icons = mobdb.HandleMobResistances(mob)
+
+        for i, icon in ipairs(icons) do
+            local _, nextIcon = next(icons, i)
+            DrawMobInfoIcon(icon.icon, icon.name, options.iconSize[1])
+            imgui.SameLine()
+            if nextIcon == nil or icon.modifier ~= nextIcon.modifier then
+                imgui.Text(icon.modifier)
+                imgui.SameLine()
+            end
+        end
+    end
+
+    if options.showImmunity[1] then
+        local icons = mobdb.HandleMobImmunities(mob)
+
+        for _, icon in ipairs(icons) do
+            DrawMobInfoIcon(icon.icon, icon.name, options.iconSize[1])
+            imgui.SameLine()
+        end
+    end
+end
+
+
+---@param entity Entity
+local function CheckIfMob(entity)
+    if entity == nil then
+        return false
+    end
+
+    local SPAWN_PLAYER = 0x0001 -- player character
+    local SPAWN_NPC = 0x0002 -- any npc
+    local flags = entity.SpawnFlags
+
+    if bit.band(flags, SPAWN_PLAYER) == SPAWN_PLAYER or
+       bit.band(flags, SPAWN_NPC) == SPAWN_NPC then
+        return false
+    else
+        return true
+    end
+end
+
 ---@type xitool
 local tgt = {
     Name = 'tgt',
@@ -799,8 +904,28 @@ local tgt = {
             pos = T{ 386, 100 },
             flags = bit.bor(ImGuiWindowFlags_NoDecoration),
         },
+        mobInfo = T{
+            isVisible = T{ false },
+            iconSize = T{ 24 },
+            showLvl = T{ true },
+            showDetection = T{ true },
+            showWeakness = T{ true },
+            showResistance = T{ true },
+            showImmunity = T{ true },
+            name = 'xitools.tgt.mobinfo',
+            size = T{ -1, -1 },
+            pos = T{ 386, 100 },
+            flags = bit.bor(ImGuiWindowFlags_NoDecoration, ImGuiWindowFlags_AlwaysAutoResize),
+        }
     },
     HandlePacket = function(e, options)
+        if options.mobInfo.isVisible[1] then
+            if e.id == 0x00A then
+                mobdb.HandleZone(packets.inbound.zoneIn.parse(e.data))
+                mobdb.LoadZone()
+            end
+        end
+
         -- don't track anything if we're not displaying it
         local showStatus =
             options.mainWindow.showStatus[1] or
@@ -844,6 +969,23 @@ local tgt = {
             if imgui.InputInt2('Target of target position', options.totWindow.pos) then
                 imgui.SetWindowPos(options.totWindow.name, options.totWindow.pos)
             end
+            
+            imgui.Checkbox('Show target info (via mobdb)', options.mobInfo.isVisible)
+            if options.mobInfo.isVisible[1] then
+                imgui.Indent()
+                imgui.InputInt('Icon size', options.mobInfo.iconSize)
+                imgui.Checkbox('Show level', options.mobInfo.showLvl)
+                imgui.SameLine()
+                imgui.Checkbox('Show detection', options.mobInfo.showDetection)
+                
+                imgui.Checkbox('Show weaknesses', options.mobInfo.showWeakness)
+                imgui.SameLine()
+                imgui.Checkbox('Show resistances', options.mobInfo.showResistance)
+
+                imgui.Checkbox('Show status immunities', options.mobInfo.showImmunity)
+                imgui.Unindent()
+            end
+
             imgui.EndTabItem()
         end
     end,
@@ -861,6 +1003,8 @@ local tgt = {
             targetId, subTargetId = subTargetId, targetId
         end
 
+        local isMob = CheckIfMob(GetEntity(targetId))
+
         -- TODO: if no subtarget, check for stpt/stal
 
         if options.showMain[1] and targetActive and targetId ~= 0 then
@@ -875,6 +1019,14 @@ local tgt = {
             ui.DrawUiWindow(options.subWindow, gOptions, function()
                 local entity = GetEntity(subTargetId)
                 DrawTgt(entity, options.subWindow)
+            end)
+        end
+
+        if options.mobInfo.isVisible[1] and targetActive and targetId ~= 0 and isMob then
+            ui.DrawUiWindow(options.mobInfo, gOptions, function()
+                mobdb.InitializeIcons()
+                local entity = GetEntity(targetId)
+                DrawMobInfo(entity, targetId, options.mobInfo)
             end)
         end
 
