@@ -10,22 +10,22 @@ local packets = require('lin/packets')
 local settings = require('settings')
 
 local wsPoints = {
-    [0x120] = 1 + 4, -- Light
-    [0x121] = 1 + 4, -- Darkness
-    [0x122] = 1 + 2, -- Gravitation
-    [0x123] = 1 + 2, -- Fragmentation
-    [0x124] = 1 + 2, -- Distortion
-    [0x125] = 1 + 2, -- Fusion
-    [0x126] = 1 + 1, -- Compression
-    [0x127] = 1 + 1, -- Liquefaction
-    [0x128] = 1 + 1, -- Induration
-    [0x129] = 1 + 1, -- Reverberation
-    [0x12A] = 1 + 1, -- Transfixion
-    [0x12B] = 1 + 1, -- Scission
-    [0x12C] = 1 + 1, -- Detonation
-    [0x12D] = 1 + 1, -- Impaction
-    [0x12E] = 1 + 4, -- Radiance
-    [0x12F] = 1 + 4, -- Umbra
+    [0x120] = 11, -- Light
+    [0x121] = 11, -- Darkness
+    [0x122] = 9, -- Gravitation
+    [0x123] = 9, -- Fragmentation
+    [0x124] = 9, -- Distortion
+    [0x125] = 9, -- Fusion
+    [0x126] = 7, -- Compression
+    [0x127] = 7, -- Liquefaction
+    [0x128] = 7, -- Induration
+    [0x129] = 7, -- Reverberation
+    [0x12A] = 7, -- Transfixion
+    [0x12B] = 7, -- Scission
+    [0x12C] = 7, -- Detonation
+    [0x12D] = 7, -- Impaction
+    [0x12E] = 11, -- Radiance
+    [0x12F] = 11, -- Umbra
 }
 
 local defaultConfig = T{
@@ -152,10 +152,10 @@ local function LoadConfig(c)
     end
 end
 
-local function GetMainHand()
+local function GetTrialWeapon(slot_idx)
     local inv = AshitaCore:GetMemoryManager():GetInventory()
 
-    local equipped = inv:GetEquippedItem(0).Index
+    local equipped = inv:GetEquippedItem(slot_idx).Index
     local container = bit.rshift(bit.band(equipped, 0xFF00), 8)
     local index = bit.band(equipped, 0x00FF)
 
@@ -164,9 +164,20 @@ local function GetMainHand()
 end
 
 local function HandleWeaponskill(packet)
-    local weapon = GetMainHand()
-    if config.weapons[weapon] == nil then
-        return
+    local mh = GetTrialWeapon(0)
+    local ranged = GetTrialWeapon(2)
+    local weapon = nil
+
+    -- Check for trial weaoins, MH always wins
+    if config.weapons[mh] == nil then
+        -- no MH found, check ranged
+        if config.weapons[ranged] == nil then
+            -- nope, bail
+            return
+        end
+        weapon = ranged
+    else
+        weapon = mh
     end
 
     if packet.target_count < 1 then
@@ -191,7 +202,7 @@ local function HandleWeaponskill(packet)
     end
 
     -- landing a weaponskill gives 1 point
-    local earnedPoints = 1
+    local earnedPoints = 5
 
     -- forming a skillchain gives bonus points
     if action.has_proc then
