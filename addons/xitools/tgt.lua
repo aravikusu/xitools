@@ -760,10 +760,10 @@ end
 
 ---@param entity Entity
 ---@param options table
-local function DrawTgt(entity, options)
+local function DrawTgt(entity, options, isMob)
     DrawHeader(entity.Name, math.sqrt(entity.Distance), options)
     DrawHp(entity.HPPercent)
-    if options.showStatus[1] then
+    if options.showStatus[1] and isMob then
         DrawStatus(TrackedEnemies[entity.ServerId] or DefaultDebuffs)
     end
 end
@@ -1010,7 +1010,7 @@ local tgt = {
         if options.showMain[1] and targetActive and targetId ~= 0 then
             ui.DrawUiWindow(options.mainWindow, gOptions, function()
                 local entity = GetEntity(targetId)
-                DrawTgt(entity, options.mainWindow)
+                DrawTgt(entity, options.mainWindow, isMob)
                 totId = entity.TargetedIndex or 0
             end)
         end

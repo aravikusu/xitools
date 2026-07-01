@@ -31,7 +31,7 @@ a suite of UI replacement components.
 - [ ] `us`: add a toggle to display the full size no matter what
 - [-] `us`: add a toggle to display distance instead of job
 - [-] `us`: add a cast bar
-- [ ] `tgt`: hide status information on friendly/non-applicable characters
+- [-] `tgt`: hide status information on friendly/non-applicable characters
 - [-] `tgt`: show job-specific statuses (bard should see their own songs, for example)
 - [-] `tgt`: incorporate `mobDb`/`ibar` information
 - [ ] `tgt`: show job info (mobdb)
