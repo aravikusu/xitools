@@ -1,16 +1,15 @@
-# re: this fork of xitools
-The idea of this fork is to keep extending xitools. Add new features, fix things. 
-Namely: finish all the todo's lin has listed in `xitools`, then extend existing components or add new ones.
-
-Currently looking into integrating mobdb for the tgt component.
-
 # xitools
-a collection of addons (and maybe some plugins) for Ashita v4 that I made.
+a collection of addons (and maybe some plugins) for Ashita v4 that lin made (and I, Aravix, continue to work on).
+
+This fork is a continuation of lin's amazing work, striving to keep an actively maintained version that still gets new functionality.
+
+`xitools` is mostly what is being maintained. But I do look at the other addons every now and then.
 
 ## addons
 - `xitools` is a suite of UI replacement components, check its README for details
 - `recast` is a fork of `recast` that has been imgui-fied
 - `skillchain` tracks active and potential skillchains and magic bursts
+- `trials` tracks progress on ws trials.
 - `wheel` is a one-button ninja nuke thing
 - `minimap-helper` auto-configures the zoom for your Minimap plugin
 - `omen` helps keep Omen objectives in sight instead of the logspam
@@ -19,11 +18,11 @@ a collection of addons (and maybe some plugins) for Ashita v4 that I made.
 - `repl` is a debugging tool to run lua code maybe more easily
 
 ## config
-these are my ashitacast configs. perhaps you'll find them useful; mostly i just
-want them under source control with the rest of my ashita stuff.
+These are lin's ashitacast configs. Perhaps you'll find them useful; lin just
+wanted them under source control with the rest of their ashita stuff.
 
 ## scripts
-scripts i may or may not use, and that you may or may not find useful.
+Scripts that lin made, that you may or may not find useful.
 
 ## acknowledgements
 - atom0s for [ashita](https://github.com/AshitaXI/Ashita-v4beta), recast, and lots of other code that i've yoinked
